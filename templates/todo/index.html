@@ -1,0 +1,94 @@
+{%load static%}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>To-Do App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f9;
+            padding: 40px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        input[type="text"] {
+            width: 70%;
+            padding: 8px;
+        }
+
+        button {
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .task {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 10px 0;
+        }
+
+        .completed {
+            text-decoration: line-through;
+            color: gray;
+        }
+
+        .actions form {
+            display: inline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>My To-Do List</h2>
+
+    <!-- Add Task -->
+    <form method="POST">
+        {% csrf_token %}
+        <input type="text" name="title" placeholder="Enter task">
+        <button type="submit">Add</button>
+    </form>
+
+    <hr>
+
+    <!-- Task List -->
+    {% for task in tasks %}
+        <div class="task">
+            <span class="{% if task.completed %}completed{% endif %}">
+                {{ task.title }}
+            </span>
+
+            <div class="actions">
+                <!-- Toggle Complete -->
+                <form action="{% url 'update_task' task.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit">✔</button>
+                </form>
+
+                <!-- Delete -->
+                <form action="{% url 'delete_task' task.id %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit">❌</button>
+                </form>
+            </div>
+        </div>
+    {% empty %}
+        <p>No tasks added yet.</p>
+    {% endfor %}
+</div>
+
+</body>
+</html>
